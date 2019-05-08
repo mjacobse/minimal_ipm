@@ -35,11 +35,11 @@ def solve(init_x, init_mult_x, max_iterations=500,
     yield iterate
     for _ in range(0, max_iterations):
         #assert stepsize_limiter.is_fulfilled(iterate)
-        kkt_matrix = numpy.matrix([[problem.Params.quadratic, 0, -1,  0, 1],
-                                   [0, 0, 0, -1, 1],
-                                   [1, 1, 0,  0, 0],
-                                   [iterate.mult_x, 0, iterate.x, 0, 0],
-                                   [0, iterate.mult_s, 0, iterate.s, 0]])
+        kkt_matrix = numpy.array([[problem.Params.quadratic, 0, -1,  0, 1],
+                                  [0, 0, 0, -1, 1],
+                                  [1, 1, 0,  0, 0],
+                                  [iterate.mult_x, 0, iterate.x, 0, 0],
+                                  [0, iterate.mult_s, 0, iterate.s, 0]])
         step = step_calculator.calculate_step(iterate, kkt_matrix)
         stepsize = iterate.get_max_stepsize(step, stepsize_limiter)
         # stepsize = make_stepsize_valid(stepsize, iterate, step,
