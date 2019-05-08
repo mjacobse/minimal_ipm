@@ -9,9 +9,9 @@ class ConstantPathFollowing:
 
     def calculate_step(self, iterate, kkt_matrix):
         target = self.reduction_factor * iterate.avg_compl()
-        rhs = [0, 0, 0,
-               -(iterate.x * iterate.mult_x - target),
-               -(iterate.s * iterate.mult_s - target)]
+        rhs = -numpy.array(iterate.get_residual() +
+                           [(iterate.x * iterate.mult_x - target),
+                            (iterate.s * iterate.mult_s - target)])
         return problem.Step(numpy.linalg.solve(kkt_matrix, rhs))
 
 
@@ -20,9 +20,9 @@ class MehrotraPredictorCorrector:
         self.exponent = exponent
 
     def calculate_step(self, iterate, kkt_matrix):
-        rhs = [0, 0, 0,
-               -(iterate.x * iterate.mult_x),
-               -(iterate.s * iterate.mult_s)]
+        rhs = -numpy.array(iterate.get_residual() +
+                           [(iterate.x * iterate.mult_x),
+                            (iterate.s * iterate.mult_s)])
         affine_step = problem.Step(numpy.linalg.solve(kkt_matrix, rhs))
         stepsize = iterate.get_max_stepsize(affine_step,
                                             NonNegativityNeighborhood())

@@ -61,6 +61,9 @@ class FeasibleIterate:
         return [self.x * step.mult_x + self.mult_x * step.x,
                 self.s * step.mult_s + self.mult_s * step.s]
 
+    def get_residual(self):
+        return [0.0, 0.0, 0.0]
+
     def update(self, step, stepsize):
         self.x += stepsize * step.x
         self.mult_x += stepsize * step.mult_x
