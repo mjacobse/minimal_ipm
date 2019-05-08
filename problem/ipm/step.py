@@ -16,6 +16,9 @@ class ConstantPathFollowing:
 
 
 class MehrotraPredictorCorrector:
+    def __init__(self, exponent=3.0):
+        self.exponent = exponent
+
     def calculate_step(self, iterate, kkt_matrix):
         rhs = [0, 0, 0,
                -(iterate.x * iterate.mult_x),
@@ -24,7 +27,7 @@ class MehrotraPredictorCorrector:
         stepsize = iterate.get_max_stepsize(affine_step,
                                             NonNegativityNeighborhood())
         reduction_factor = (iterate.affine_avg_compl(affine_step, stepsize) /
-                            iterate.avg_compl())**3
+                            iterate.avg_compl())**self.exponent
 
         target = reduction_factor * iterate.avg_compl()
         rhs[3] -= (affine_step.x * affine_step.mult_x - target)
