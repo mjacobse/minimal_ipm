@@ -12,9 +12,9 @@ def plot_results(not_converged_x, not_converged_mult_x, converged_x,
 
     fig = plt.figure()
     plt.scatter(not_converged_x, not_converged_mult_x,
-                edgecolors='none', marker='.', c='black', alpha=0.25)
+                edgecolors='none', marker='.', c='black', s=2.0)
     plt.scatter(converged_x, converged_mult_x, edgecolors='none',
-                marker='.', c=converged_iterations, cmap='YlGnBu', alpha=0.25)
+                marker='.', c=converged_iterations, cmap='YlGnBu', s=2.0)
     plt.colorbar(label='Iterations')
     plt.xlim(0, 1)
     plt.yscale('log')
