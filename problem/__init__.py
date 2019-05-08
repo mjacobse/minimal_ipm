@@ -73,7 +73,7 @@ class FeasibleIterate:
         assert self.mult_s > 0.0
 
     def get_max_stepsize(self, step, stepsize_limiter):
-        # assert stepsize_limiter.is_fulfilled(self)
+        assert stepsize_limiter.is_fulfilled(self)
         return stepsize_limiter.get_max_stepsize(self, step)
 
 
