@@ -19,7 +19,8 @@ def is_stepsize_ok(iterate, step, stepsize, stepsize_limiter):
 def find_exact_stepsize(iterate, step, stepsize, stepsize_limiter):
     fraction = 1e-3
 
-    top = stepsize
+    assert stepsize <= 1.0
+    top = numpy.nextafter(stepsize, 1.0)
     while is_stepsize_ok(iterate, step, top, stepsize_limiter):
         if top >= 1.0:
             return 1.0
