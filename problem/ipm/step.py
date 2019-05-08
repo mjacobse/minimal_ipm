@@ -4,9 +4,11 @@ from .stepsize import NonNegativityNeighborhood
 
 
 class ConstantPathFollowing:
+    def __init__(self, reduction_factor=0.1):
+        self.reduction_factor = reduction_factor
+
     def calculate_step(self, iterate, kkt_matrix):
-        reduction_factor = 0.1
-        target = reduction_factor * iterate.avg_compl()
+        target = self.reduction_factor * iterate.avg_compl()
         rhs = [0, 0, 0,
                -(iterate.x * iterate.mult_x - target),
                -(iterate.s * iterate.mult_s - target)]
