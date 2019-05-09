@@ -11,10 +11,11 @@ def plot_results(not_converged_x, not_converged_mult_x, converged_x,
     matplotlib.rcParams['figure.figsize'] = (16, 9)
 
     fig = plt.figure()
+    size = 5000000 / (len(not_converged_x) + len(converged_x))
     plt.scatter(not_converged_x, not_converged_mult_x,
-                edgecolors='none', marker='.', c='black', s=2.0)
+                edgecolors='none', marker='.', c='black', s=size)
     plt.scatter(converged_x, converged_mult_x, edgecolors='none',
-                marker='.', c=converged_iterations, cmap='YlGnBu', s=2.0)
+                marker='.', c=converged_iterations, cmap='YlGnBu', s=size)
     plt.colorbar(label='Iterations')
     plt.xlim(0, 1)
     plt.yscale('log')
