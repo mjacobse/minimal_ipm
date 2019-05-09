@@ -6,9 +6,16 @@ class NonNegativityNeighborhood:
     def __init__(self, fraction_to_boundary=1.0):
         self.fraction_to_boundary = fraction_to_boundary
 
-    def is_fulfilled(self, iterate):
-        return (iterate.x > 0.0 and iterate.s > 0.0 and
-                iterate.mult_x > 0.0 and iterate.mult_s > 0.0)
+    def is_fulfilled(self, iterate, old_iterate=None):
+        if not old_iterate:
+            return (iterate.x > 0.0 and iterate.s > 0.0 and
+                    iterate.mult_x > 0.0 and iterate.mult_s > 0.0)
+        assert self.is_fulfilled(old_iterate)
+        max_reduction = (1.0 - self.fraction_to_boundary)
+        return (iterate.x >= max_reduction * old_iterate.x and
+                iterate.s >= max_reduction * old_iterate.s and
+                iterate.mult_x >= max_reduction * old_iterate.mult_x and
+                iterate.mult_s >= max_reduction * old_iterate.mult_s)
 
     def get_stepsize_limit(self, current, step):
         assert current > 0.0
@@ -22,22 +29,10 @@ class NonNegativityNeighborhood:
             assert current + limit * step > 0.0
         return limit
 
-    def get_stepsize_limit_upper(self, current, step, boundary):
-        assert (boundary - current) > 0.0
-        limit = numpy.inf
-        if step > 0.0:
-            allowed_add = numpy.nextafter(((numpy.nextafter(boundary, 0.0) - current) + (boundary - current)) / 2.0, 0.0)
-            limit = allowed_add / step
-            if limit * step > allowed_add:
-                limit = numpy.nextafter(limit, 0.0)
-            assert (boundary - (current + limit * step)) > 0.0
-        return limit
-
     def get_max_stepsize(self, iterate, step):
         stepsize_limits = [
             self.get_stepsize_limit(iterate.x, step.x),
-            self.get_stepsize_limit_upper(iterate.x, step.x,
-                                          problem.Params.upper_bound),
+            self.get_stepsize_limit(iterate.s, step.s),
             self.get_stepsize_limit(iterate.mult_x, step.mult_x),
             self.get_stepsize_limit(iterate.mult_s, step.mult_s)
         ]
@@ -50,7 +45,7 @@ class NegativeInfinityNeighborhood:
     def __init__(self, gamma=0.0003):
         self.gamma = gamma
 
-    def is_fulfilled(self, iterate):
+    def is_fulfilled(self, iterate, old_iterate=None):
         limit = self.gamma * iterate.avg_compl()
         return (iterate.x * iterate.mult_x >= limit and
                 iterate.s * iterate.mult_s >= limit)

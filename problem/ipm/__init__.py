@@ -9,7 +9,7 @@ def is_stepsize_ok(iterate, step, stepsize, stepsize_limiter):
         new_iterate = problem.FeasibleIterate(
             iterate.x + stepsize * step.x,
             iterate.mult_x + stepsize * step.mult_x)
-        if stepsize_limiter.is_fulfilled(new_iterate):
+        if stepsize_limiter.is_fulfilled(new_iterate, iterate):
             return True
     except ValueError:
         pass
