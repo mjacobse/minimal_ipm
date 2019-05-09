@@ -8,7 +8,7 @@ def solve_with_refinement(matrix, rhs, refine_compl=True):
     old_error = numpy.inf
     max_iterations = 10
     for _ in range(0, max_iterations):
-        new_rhs = rhs - matrix @ solution
+        new_rhs = rhs - matrix.dot(solution)
         if not refine_compl:
             new_rhs[3] = 0.0
             new_rhs[4] = 0.0
