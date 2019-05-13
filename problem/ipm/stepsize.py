@@ -102,3 +102,32 @@ class NegativeInfinityNeighborhood:
         negativity_limit = NonNegativityNeighborhood().get_max_stepsize(
             iterate, step)
         return min(1.0, upper_limit, negativity_limit)
+
+
+class EuclideanNeighborhood:
+    def __init__(self, theta=0.1):
+        self.theta = theta
+
+    def is_fulfilled(self, iterate, old_iterate=None):
+        products = numpy.array(iterate.get_compl_products())
+        products -= iterate.avg_compl()
+        return numpy.linalg.norm(products) <= self.theta * iterate.avg_compl()
+
+    def get_max_stepsize(self, iterate, step):
+        # TODO: better estimate
+        return 1.0
+
+
+class MaximumNeighborhood:
+    def __init__(self, theta=0.1):
+        self.theta = theta
+
+    def is_fulfilled(self, iterate, old_iterate=None):
+        products = numpy.array(iterate.get_compl_products())
+        products -= iterate.avg_compl()
+        return (numpy.linalg.norm(products, ord=numpy.inf) <=
+                self.theta * iterate.avg_compl())
+
+    def get_max_stepsize(self, iterate, step):
+        # TODO: better estimate
+        return 1.0
