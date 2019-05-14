@@ -4,7 +4,12 @@ import problem
 import random
 
 
-def get_random_initial_guess(params):
+def get_random_initial_guess(params, compl_space=False):
+    if compl_space:
+        compl_product_x = 10**random.uniform(-8, 8)
+        compl_product_s = 10**random.uniform(-8, 8)
+        return problem.info.get_iterates_from_compl_products(
+            compl_product_x, compl_product_s, params)
     init_x = random.uniform(0.0, params.upper_bound)
     init_mult_x = 10**(random.uniform(-10, 10))
     return init_x, init_mult_x
@@ -22,7 +27,8 @@ def main():
 
     results = []
     for _ in range(0, 10000):
-        init_x, init_mult_x = get_random_initial_guess(params)
+        init_x, init_mult_x = get_random_initial_guess(params,
+                                                       compl_space=False)
         try:
             initial_iterate = problem.FeasibleIterate(init_x,
                                                       init_mult_x,
