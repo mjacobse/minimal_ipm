@@ -7,7 +7,8 @@ def main():
     import csv
     import random
 
-    x_optimal = problem.info.get_optimal_solution()
+    params = problem.Params()
+    x_optimal = problem.info.get_optimal_solution(params)
 
     max_iterations = 100
     stepsize_limiter = problem.ipm.stepsize.NonNegativityNeighborhood(0.9995)
@@ -15,17 +16,19 @@ def main():
 
     results = []
     for _ in range(0, 10000):
-        init_x = random.uniform(0.0, problem.Params.upper_bound)
+        init_x = random.uniform(0.0, params.upper_bound)
         init_mult_x = 10**(random.uniform(-10, 10))
         try:
             initial_iterate = problem.FeasibleIterate(init_x,
-                                                      init_mult_x)
+                                                      init_mult_x,
+                                                      params)
             if not stepsize_limiter.is_fulfilled(initial_iterate):
                 raise ValueError
         except ValueError:
             continue
         iterates = problem.ipm.solve(initial_iterate.x,
                                      initial_iterate.mult_x,
+                                     params,
                                      max_iterations=max_iterations,
                                      stepsize_limiter=stepsize_limiter)
         iterates = list(iterates)

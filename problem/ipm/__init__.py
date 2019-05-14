@@ -8,7 +8,8 @@ def is_stepsize_ok(iterate, step, stepsize, stepsize_limiter):
     try:
         new_iterate = problem.FeasibleIterate(
             iterate.x + stepsize * step.x,
-            iterate.mult_x + stepsize * step.mult_x)
+            iterate.mult_x + stepsize * step.mult_x,
+            iterate.params)
         if stepsize_limiter.is_fulfilled(new_iterate, iterate):
             return True
     except ValueError:
@@ -44,14 +45,14 @@ def find_exact_stepsize(iterate, step, stepsize, stepsize_limiter):
     return bot
 
 
-def solve(init_x, init_mult_x, max_iterations=500,
+def solve(init_x, init_mult_x, params, max_iterations=500,
           step_calculator=step.MehrotraPredictorCorrector(),
           stepsize_limiter=stepsize.NegativeInfinityNeighborhood()):
-    iterate = problem.FeasibleIterate(init_x, init_mult_x)
+    iterate = problem.FeasibleIterate(init_x, init_mult_x, params)
     yield iterate
     for _ in range(0, max_iterations):
         assert stepsize_limiter.is_fulfilled(iterate)
-        kkt_matrix = numpy.array([[problem.Params.quadratic, 0, -1,  0, 1],
+        kkt_matrix = numpy.array([[params.quadratic, 0, -1,  0, 1],
                                   [0, 0, 0, -1, 1],
                                   [1, 1, 0,  0, 0],
                                   [iterate.mult_x, 0, iterate.x, 0, 0],

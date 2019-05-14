@@ -10,15 +10,17 @@ import numpy
 
 
 class Params:
-    quadratic = 1.0
-    linear = -0.9
-    upper_bound = 1.0
+    def __init__(self, quadratic=1.0, linear=-0.9, upper_bound=1.0):
+        self.quadratic = quadratic
+        self.linear = linear
+        self.upper_bound = upper_bound
 
 
 # Primal-Dual feasible iterate
 class FeasibleIterate:
-    def __init__(self, init_x, init_mult_x):
-        if init_x <= 0.0 or init_x >= Params.upper_bound:
+    def __init__(self, init_x, init_mult_x, params):
+        self.params = params
+        if init_x <= 0.0 or init_x >= params.upper_bound:
             raise ValueError("Invalid value for x!")
         if init_mult_x <= 0.0:
             raise ValueError("Invalid value for lower multiplier!")
@@ -33,12 +35,12 @@ class FeasibleIterate:
 
     @property
     def s(self):
-        return Params.upper_bound - self.x
+        return self.params.upper_bound - self.x
 
     @property
     def mult_s(self):
-        return self.mult_x - (Params.quadratic * self.x +
-                              Params.linear)
+        return self.mult_x - (self.params.quadratic * self.x +
+                              self.params.linear)
 
     @property
     def mult_equality(self):
