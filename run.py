@@ -13,9 +13,10 @@ def main():
     iteration_info = problem.ipm.solve(init_x, init_mult_x, problem.Params(),
                                        max_iterations=500,
                                        stepsize_limiter=stepsize_limiter)
+    print('       x             mult_x        s             mult_s')
     for i, (iterate, _) in enumerate(iteration_info):
-        print('{0:3d}   {1:10.4e}   {2:10.4e}'.format(
-            i, iterate.x, iterate.mult_x))
+        print('{0:3d}   {1:11.4e}   {2:11.4e}   {3:11.4e}   {4:11.4e}'.format(
+            i, iterate.x, iterate.mult_x, iterate.s, iterate.mult_s))
 
 
 if __name__ == "__main__":
