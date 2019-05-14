@@ -57,7 +57,8 @@ def solve(init_x, init_mult_x, params, max_iterations=500,
                                   [1, 1, 0,  0, 0],
                                   [iterate.mult_x, 0, iterate.x, 0, 0],
                                   [0, iterate.mult_s, 0, iterate.s, 0]])
-        step = step_calculator.calculate_step(iterate, kkt_matrix)
+        step_info = step_calculator.calculate_step(iterate, kkt_matrix)
+        step = step_info.steps['combined']
         stepsize = iterate.get_max_stepsize(step, stepsize_limiter)
         stepsize = find_exact_stepsize(iterate, step, stepsize,
                                        stepsize_limiter)

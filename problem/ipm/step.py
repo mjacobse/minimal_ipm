@@ -1,3 +1,4 @@
+import collections
 import numpy
 import problem
 from .stepsize import NonNegativityNeighborhood
@@ -20,6 +21,9 @@ def solve_with_refinement(matrix, rhs, refine_compl=True):
     return solution
 
 
+StepInfo = collections.namedtuple('StepInfo', ['steps', 'target_compl'])
+
+
 class ConstantPathFollowing:
     def __init__(self, reduction_factor=0.1):
         self.reduction_factor = reduction_factor
@@ -29,7 +33,8 @@ class ConstantPathFollowing:
         rhs = -numpy.array(iterate.get_residual() +
                            [(iterate.x * iterate.mult_x - target),
                             (iterate.s * iterate.mult_s - target)])
-        return problem.Step(solve_with_refinement(kkt_matrix, rhs))
+        step = problem.Step(solve_with_refinement(kkt_matrix, rhs))
+        return StepInfo(steps={'combined': step}, target_compl=target)
 
 
 class MehrotraPredictorCorrector:
@@ -49,4 +54,6 @@ class MehrotraPredictorCorrector:
         target = reduction_factor * iterate.avg_compl()
         rhs[3] -= (affine_step.x * affine_step.mult_x - target)
         rhs[4] -= (affine_step.s * affine_step.mult_s - target)
-        return problem.Step(solve_with_refinement(kkt_matrix, rhs))
+        step = problem.Step(solve_with_refinement(kkt_matrix, rhs))
+        return StepInfo(steps={'predictor': affine_step, 'combined': step},
+                        target_compl=target)
