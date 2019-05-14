@@ -8,7 +8,7 @@ def main():
     import random
 
     params = problem.Params()
-    x_optimal = problem.info.get_optimal_solution(params)
+    x_optimal = params.get_optimal_solution()
 
     max_iterations = 100
     stepsize_limiter = problem.ipm.stepsize.NonNegativityNeighborhood(0.9995)

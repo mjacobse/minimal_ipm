@@ -15,6 +15,15 @@ class Params:
         self.linear = linear
         self.upper_bound = upper_bound
 
+    def get_optimal_solution(self):
+        return numpy.clip(-self.linear / self.quadratic, 0.0, self.upper_bound)
+
+    def get_s(self, x):
+        return self.upper_bound - x
+
+    def get_mult_s(self, x, mult_x):
+        return mult_x - (self.quadratic * x + self.linear)
+
 
 # Primal-Dual feasible iterate
 class FeasibleIterate:
@@ -35,12 +44,11 @@ class FeasibleIterate:
 
     @property
     def s(self):
-        return self.params.upper_bound - self.x
+        return self.params.get_s(self.x)
 
     @property
     def mult_s(self):
-        return self.mult_x - (self.params.quadratic * self.x +
-                              self.params.linear)
+        return self.params.get_mult_s(self.x, self.mult_x)
 
     @property
     def mult_equality(self):
