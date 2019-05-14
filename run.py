@@ -10,10 +10,10 @@ def main():
 
     init_x = 0.1
     init_mult_x = 0.1
-    iterates = problem.ipm.solve(init_x, init_mult_x, problem.Params(),
-                                 max_iterations=500,
-                                 stepsize_limiter=stepsize_limiter)
-    for i, iterate in enumerate(iterates):
+    iteration_info = problem.ipm.solve(init_x, init_mult_x, problem.Params(),
+                                       max_iterations=500,
+                                       stepsize_limiter=stepsize_limiter)
+    for i, (iterate, _) in enumerate(iteration_info):
         print('{0:3d}   {1:10.4e}   {2:10.4e}'.format(
             i, iterate.x, iterate.mult_x))
 

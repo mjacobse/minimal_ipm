@@ -26,15 +26,15 @@ def main():
                 raise ValueError
         except ValueError:
             continue
-        iterates = problem.ipm.solve(initial_iterate.x,
-                                     initial_iterate.mult_x,
-                                     params,
-                                     max_iterations=max_iterations,
-                                     stepsize_limiter=stepsize_limiter)
-        iterates = list(iterates)
-        num_iterations = len(iterates) - 1
+        iteration_info = problem.ipm.solve(initial_iterate.x,
+                                           initial_iterate.mult_x,
+                                           params,
+                                           max_iterations=max_iterations,
+                                           stepsize_limiter=stepsize_limiter)
+        iteration_info = list(iteration_info)
+        num_iterations = len(iteration_info) - 1
         if num_iterations < max_iterations:
-            assert abs(iterates[-1].x - x_optimal) < 1e-8
+            assert abs(iteration_info[-1].iterate.x - x_optimal) < 1e-8
         results.append((init_x, init_mult_x, num_iterations))
         #print(num_iterations)
 
