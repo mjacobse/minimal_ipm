@@ -1,11 +1,17 @@
 import numpy
 import os
 import problem
+import random
+
+
+def get_random_initial_guess(params):
+    init_x = random.uniform(0.0, params.upper_bound)
+    init_mult_x = 10**(random.uniform(-10, 10))
+    return init_x, init_mult_x
 
 
 def main():
     import csv
-    import random
 
     params = problem.Params()
     x_optimal = params.get_optimal_solution()
@@ -16,8 +22,7 @@ def main():
 
     results = []
     for _ in range(0, 10000):
-        init_x = random.uniform(0.0, params.upper_bound)
-        init_mult_x = 10**(random.uniform(-10, 10))
+        init_x, init_mult_x = get_random_initial_guess(params)
         try:
             initial_iterate = problem.FeasibleIterate(init_x,
                                                       init_mult_x,
