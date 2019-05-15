@@ -63,7 +63,7 @@ def solve(init_x, init_mult_x, params, max_iterations=500,
                                   [iterate.mult_x, 0, iterate.x, 0, 0],
                                   [0, iterate.mult_s, 0, iterate.s, 0]])
         step_info = step_calculator.calculate_step(iterate, kkt_matrix)
-        yield IterationInfo(copy.deepcopy(iterate), step_info)
+        yield IterationInfo(copy.copy(iterate), step_info)
         step = step_info.steps['combined']
         stepsize = iterate.get_max_stepsize(step, stepsize_limiter)
         stepsize = find_exact_stepsize(iterate, step, stepsize,
@@ -71,5 +71,5 @@ def solve(init_x, init_mult_x, params, max_iterations=500,
         iterate.update(step, stepsize)
         if iterate.avg_compl() < 1e-10:
             break
-    yield IterationInfo(copy.deepcopy(iterate),
+    yield IterationInfo(copy.copy(iterate),
                         problem.ipm.step.StepInfo({}, None))
