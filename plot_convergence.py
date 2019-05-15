@@ -1,6 +1,6 @@
-import csv
 import glob
 import os
+import problem
 
 
 def plot_results(not_converged_x, not_converged_mult_x, converged_x,
@@ -28,30 +28,13 @@ def plot_results(not_converged_x, not_converged_mult_x, converged_x,
 
 
 def main():
-    for filename in glob.glob("convergence*.csv"):
-        not_converged_x = []
-        not_converged_mult_x = []
-        converged_x = []
-        converged_mult_x = []
-        converged_iterations = []
-        with open(filename, 'r') as csvfile:
-            csv_reader = csv.reader(csvfile, delimiter=';')
-            header = next(csv_reader)
-            iteration_limit = int(header[2])
-            for row in csv_reader:
-                iterations = int(row[2])
-                assert iterations >= 0
-                assert iterations <= iteration_limit
-                if iterations < iteration_limit:
-                    converged_x.append(float(row[0]))
-                    converged_mult_x.append(float(row[1]))
-                    converged_iterations.append(iterations)
-                else:
-                    not_converged_x.append(float(row[0]))
-                    not_converged_mult_x.append(float(row[1]))
-        plot_results(not_converged_x, not_converged_mult_x, converged_x,
-                     converged_mult_x, converged_iterations,
-                     os.path.splitext(filename)[0])
+    for filename in glob.glob("convergence*.npz"):
+        result = problem.util.ConvergenceResultList.from_file(filename)
+        plot_results(result.not_converged_x,
+                     result.not_converged_mult_x,
+                     result.converged_x,
+                     result.converged_mult_x,
+                     result.converged_iterations, os.path.splitext(filename)[0])
 
 
 if __name__ == "__main__":

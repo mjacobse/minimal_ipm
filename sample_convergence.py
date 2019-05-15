@@ -15,17 +15,19 @@ def get_random_initial_guess(params, compl_space=False):
     return init_x, init_mult_x
 
 
-def main():
-    import csv
-
-    params = problem.Params()
+def sample_convergence(filepath):
+    if os.path.isfile(filepath):
+        results = problem.util.ConvergenceResultList.from_file(filepath)
+    else:
+        results = problem.util.ConvergenceResultList(params=problem.Params(),
+                                                     max_iterations=100)
+    params = results.params
     x_optimal = params.get_optimal_solution()
 
-    max_iterations = 100
+    max_iterations = results.max_iterations
     stepsize_limiter = problem.ipm.stepsize.NonNegativityNeighborhood(0.9995)
     stepsize_limiter = problem.ipm.stepsize.NegativeInfinityNeighborhood(0.0000605)
 
-    results = []
     for _ in range(0, 10000):
         init_x, init_mult_x = get_random_initial_guess(params,
                                                        compl_space=False)
@@ -46,17 +48,16 @@ def main():
         num_iterations = len(iteration_info) - 1
         if num_iterations < max_iterations:
             assert abs(iteration_info[-1].iterate.x - x_optimal) < 1e-8
-        results.append((init_x, init_mult_x, num_iterations))
+        results.add_result(init_x, init_mult_x, num_iterations)
         #print(num_iterations)
 
-    is_new = not os.path.isfile('convergence.csv')
-    with open('convergence.csv', 'w' if is_new else 'a') as csvfile:
-        csv_writer = csv.writer(csvfile, delimiter=';')
-        if is_new:
-            csv_writer.writerow([-numpy.inf, -numpy.inf, max_iterations])
-        for result in results:
-            csv_writer.writerow([result[0], result[1], result[2]])
+    results.to_file(filepath)
+
+
+def main():
+    while True:
+        sample_convergence('convergence.npz')
+
 
 if __name__ == "__main__":
-    while True:
-        main()
+    main()

@@ -1,5 +1,6 @@
 from . import ipm
 from . import info
+from . import util
 import numpy
 # Solve the problem
 #
