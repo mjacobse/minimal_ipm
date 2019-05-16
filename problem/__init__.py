@@ -107,3 +107,11 @@ class Step:
 
     def get_compl_products(self):
         return [self.x * self.mult_x, self.s * self.mult_s]
+
+    def __add__(self, other):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.x = self.x + other.x
+        result.mult_x = self.mult_x + other.mult_x
+        result.mult_s = self.mult_s + other.mult_s
+        return result

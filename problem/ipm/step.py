@@ -52,8 +52,11 @@ class MehrotraPredictorCorrector:
                             iterate.avg_compl())**self.exponent
 
         target = reduction_factor * iterate.avg_compl()
-        rhs[3] -= (affine_step.x * affine_step.mult_x - target)
-        rhs[4] -= (affine_step.s * affine_step.mult_s - target)
-        step = problem.Step(solve_with_refinement(kkt_matrix, rhs))
-        return StepInfo(steps={'predictor': affine_step, 'combined': step},
+        rhs.fill(0.0)
+        rhs[3] = -(affine_step.x * affine_step.mult_x - target)
+        rhs[4] = -(affine_step.s * affine_step.mult_s - target)
+        corrector_step = problem.Step(solve_with_refinement(kkt_matrix, rhs))
+        return StepInfo(steps={'predictor': affine_step,
+                               'corrector': corrector_step,
+                               'combined': affine_step + corrector_step},
                         target_compl=target)
