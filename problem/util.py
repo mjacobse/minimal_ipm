@@ -14,7 +14,7 @@ class ConvergenceResultList:
 
     @classmethod
     def from_file(cls, filepath):
-        data = numpy.load(filepath, allow_pickle=False)
+        data = numpy.load(filepath)
         params = problem.Params()
         params.quadratic = data['params_quadratic']
         params.linear = data['params_linear']
