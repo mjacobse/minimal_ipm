@@ -51,3 +51,26 @@ class ConvergenceResultList:
         else:
             self.not_converged_x.append(x)
             self.not_converged_mult_x.append(mult_x)
+
+
+def get_period_length(iteration_info):
+    def find_previous_occurence(iterates, current):
+        i = current - 1
+        while i >= 0 and not iterates[i].isclose(iterates[current]):
+            i -= 1
+        return i
+
+    iterates = [info.iterate for info in iteration_info]
+    num_iterates = len(iterates)
+    last = num_iterates - 1
+    previous_last = find_previous_occurence(iterates, last)
+    period_length = last - previous_last
+
+    period_start = previous_last - period_length + 1
+    if period_start < 0:
+        return num_iterates  # not enough info to verify period
+
+    for i in range(period_start, previous_last):
+        if not iterates[i].isclose(iterates[i + period_length]):
+            return num_iterates
+    return period_length

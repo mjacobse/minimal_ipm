@@ -87,6 +87,11 @@ class FeasibleIterate:
         assert stepsize_limiter.is_fulfilled(self)
         return stepsize_limiter.get_max_stepsize(self, step)
 
+    def isclose(self, other, rtol=1e-10, atol=0.0):
+        return numpy.allclose([self.x, self.s, self.mult_x, self.mult_s],
+                              [other.x, other.s, other.mult_x, other.mult_s],
+                              rtol=rtol, atol=atol)
+
 
 class Step:
     def __init__(self, raw_step):
