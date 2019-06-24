@@ -6,11 +6,44 @@ class ConvergenceResultList:
     def __init__(self, params, max_iterations):
         self.params = params
         self.max_iterations = max_iterations
-        self.converged_x = []
-        self.converged_mult_x = []
+        self.__converged_x = []
+        self.__converged_mult_x = []
         self.converged_iterations = []
-        self.not_converged_x = []
-        self.not_converged_mult_x = []
+        self.__not_converged_x = []
+        self.__not_converged_mult_x = []
+
+    @property
+    def converged_x(self):
+        return numpy.array(self.__converged_x)
+
+    @property
+    def not_converged_x(self):
+        return numpy.array(self.__not_converged_x)
+
+    @property
+    def converged_mult_x(self):
+        return numpy.array(self.__converged_mult_x)
+
+    @property
+    def not_converged_mult_x(self):
+        return numpy.array(self.__not_converged_mult_x)
+
+    @property
+    def converged_s(self):
+        return self.params.get_s(self.converged_x)
+
+    @property
+    def not_converged_s(self):
+        return self.params.get_s(self.not_converged_x)
+
+    @property
+    def converged_mult_s(self):
+        return self.params.get_mult_s(self.converged_x, self.converged_mult_x)
+
+    @property
+    def not_converged_mult_s(self):
+        return self.params.get_mult_s(self.not_converged_x,
+                                      self.not_converged_mult_x)
 
     @classmethod
     def from_file(cls, filepath):
@@ -21,11 +54,11 @@ class ConvergenceResultList:
         params.upper_bound = data['params_upper_bound']
         max_iterations = data['max_iterations']
         results = ConvergenceResultList(params, max_iterations)
-        results.converged_x = data['converged_x'].tolist()
-        results.converged_mult_x = data['converged_mult_x'].tolist()
+        results.__converged_x = data['converged_x'].tolist()
+        results.__converged_mult_x = data['converged_mult_x'].tolist()
         results.converged_iterations = data['converged_iterations'].tolist()
-        results.not_converged_x = data['not_converged_x'].tolist()
-        results.not_converged_mult_x = data['not_converged_mult_x'].tolist()
+        results.__not_converged_x = data['not_converged_x'].tolist()
+        results.__not_converged_mult_x = data['not_converged_mult_x'].tolist()
         return results
 
     def to_file(self, filepath):
@@ -45,12 +78,12 @@ class ConvergenceResultList:
 
     def add_result(self, x, mult_x, iterations):
         if iterations < self.max_iterations:
-            self.converged_x.append(x)
-            self.converged_mult_x.append(mult_x)
+            self.__converged_x.append(x)
+            self.__converged_mult_x.append(mult_x)
             self.converged_iterations.append(iterations)
         else:
-            self.not_converged_x.append(x)
-            self.not_converged_mult_x.append(mult_x)
+            self.__not_converged_x.append(x)
+            self.__not_converged_mult_x.append(mult_x)
 
 
 def get_period_length(iteration_info):
