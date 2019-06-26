@@ -120,3 +120,14 @@ class Step:
         result.mult_x = self.mult_x + other.mult_x
         result.mult_s = self.mult_s + other.mult_s
         return result
+
+    def __mul__(self, other):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.x = self.x * other
+        result.mult_x = self.mult_x * other
+        result.mult_s = self.mult_s * other
+        return result
+
+    def __rmul__(self, other):
+        return self * other

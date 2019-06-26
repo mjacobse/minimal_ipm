@@ -1,6 +1,7 @@
 import collections
 import numpy
 import problem
+from . import weighting
 from .stepsize import NonNegativityNeighborhood
 
 
@@ -38,8 +39,9 @@ class ConstantPathFollowing:
 
 
 class MehrotraPredictorCorrector:
-    def __init__(self, exponent=3.0):
+    def __init__(self, exponent=3.0, weighting=weighting.WeightingFull()):
         self.exponent = exponent
+        self.weighting = weighting
 
     def calculate_step(self, iterate, kkt_matrix):
         rhs = -numpy.array(iterate.get_residual() +
@@ -56,7 +58,9 @@ class MehrotraPredictorCorrector:
         rhs[3] = -(affine_step.x * affine_step.mult_x - target)
         rhs[4] = -(affine_step.s * affine_step.mult_s - target)
         corrector_step = problem.Step(solve_with_refinement(kkt_matrix, rhs))
+        weight = self.weighting.get_weight(iterate, affine_step, corrector_step)
         return StepInfo(steps={'predictor': affine_step,
                                'corrector': corrector_step,
-                               'combined': affine_step + corrector_step},
+                               'combined': affine_step +
+                                           weight * corrector_step},
                         target_compl=target)
