@@ -52,14 +52,12 @@ class WeightingBestCentrality:
         weights = self.settings.get_test_weights(iterate, step, step_correction)
         best_distance = float('inf')
         for weight in weights:
-            stepsize = iterate.get_max_stepsize(step + weight * step_correction,
-                                                NonNegativityNeighborhood())
             step_combined = step + weight * step_correction
-            distance = abs(math.log(
-                ((iterate.x + stepsize * step_combined.x) *
-                 (iterate.mult_x + stepsize * step_combined.mult_x)) /
-                ((iterate.s + stepsize * step_combined.s)) *
-                 (iterate.mult_s + stepsize * step_combined.mult_s)))
+            stepsize = iterate.get_max_stepsize(step_combined,
+                                                NonNegativityNeighborhood())
+            compl_products = iterate.get_affine_compl_products(step_combined,
+                                                               stepsize)
+            distance = abs(math.log(compl_products[0] / compl_products[1]))
             if distance < best_distance:
                 best_distance = distance
                 best_weight = weight

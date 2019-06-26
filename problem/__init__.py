@@ -62,11 +62,15 @@ class FeasibleIterate:
         products = self.get_compl_products()
         return sum(products) / len(products)
 
+    def get_affine_compl_products(self, step, stepsize):
+        return [(self.x + stepsize * step.x) *
+                (self.mult_x + stepsize * step.mult_x),
+                (self.s + stepsize * step.s) *
+                (self.mult_s + stepsize * step.mult_s)]
+
     def affine_avg_compl(self, step, stepsize):
-        return (max(0.0, (self.x + stepsize * step.x) *
-                         (self.mult_x + stepsize * step.mult_x)) +
-                max(0.0, (self.s + stepsize * step.s) *
-                         (self.mult_s + stepsize * step.mult_s))) / 2
+        products = self.get_affine_compl_products(step, stepsize)
+        return (max(0.0, products[0]) + max(0.0, products[1])) / 2
 
     def get_mixed_products(self, step):
         return [self.x * step.mult_x + self.mult_x * step.x,
