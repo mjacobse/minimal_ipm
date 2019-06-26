@@ -58,7 +58,7 @@ class WeightingBestCentrality:
             distance = abs(math.log(
                 ((iterate.x + stepsize * step_combined.x) *
                  (iterate.mult_x + stepsize * step_combined.mult_x)) /
-                ((iterate.s + stepsize * step_combined.s)) /
+                ((iterate.s + stepsize * step_combined.s)) *
                  (iterate.mult_s + stepsize * step_combined.mult_s)))
             if distance < best_distance:
                 best_distance = distance
