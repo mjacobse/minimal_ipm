@@ -35,7 +35,9 @@ class ConstantPathFollowing:
                            [(iterate.x * iterate.mult_x - target),
                             (iterate.s * iterate.mult_s - target)])
         step = problem.Step(solve_with_refinement(kkt_matrix, rhs))
-        return StepInfo(steps={'combined': step}, target_compl=target)
+        return StepInfo(
+            steps=collections.OrderedDict([('combined', step)]),
+            target_compl=target)
 
 
 class MehrotraPredictorCorrector:
@@ -59,8 +61,9 @@ class MehrotraPredictorCorrector:
         rhs[4] = -(affine_step.s * affine_step.mult_s - target)
         corrector_step = problem.Step(solve_with_refinement(kkt_matrix, rhs))
         weight = self.weighting.get_weight(iterate, affine_step, corrector_step)
-        return StepInfo(steps={'predictor': affine_step,
-                               'corrector': corrector_step,
-                               'combined': affine_step +
-                                           weight * corrector_step},
-                        target_compl=target)
+        return StepInfo(
+            steps=collections.OrderedDict([
+                ('predictor', affine_step),
+                ('corrector', corrector_step),
+                ('combined', affine_step + weight * corrector_step)]),
+            target_compl=target)
