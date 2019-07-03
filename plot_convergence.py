@@ -28,7 +28,7 @@ def plot_results(results, filename):
     plt.savefig(filename + '.png', format='png')
     plt.close()
 
-    matplotlib.rcParams['figure.figsize'] = (9, 9)
+    matplotlib.rcParams['figure.figsize'] = (12, 9)
     plt.figure()
     plt.scatter(results.not_converged_x * results.not_converged_mult_x,
                 results.not_converged_s * results.not_converged_mult_s,
@@ -37,10 +37,14 @@ def plot_results(results, filename):
                 results.converged_s * results.converged_mult_s,
                 edgecolors='none', marker='.', c=results.converged_iterations,
                 cmap='YlGnBu', s=dot_size)
+    plt.colorbar(label='Iterations')
     plt.xscale('log')
     plt.yscale('log')
     plt.xlim(1e-8, 1e8)
     plt.ylim(1e-8, 1e8)
+    plt.title('Convergence depending on initial complementarity products')
+    plt.xlabel('$x \\lambda_x$')
+    plt.ylabel('$s \\lambda_s$')
     plt.savefig(filename + '_compl.png', format='png')
     plt.close()
 
