@@ -1,3 +1,4 @@
+import argparse
 import numpy
 import os
 import problem
@@ -55,8 +56,11 @@ def sample_convergence(filepath):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filepath')
+    args = parser.parse_args()
     while True:
-        sample_convergence('convergence.npz')
+        sample_convergence(args.filepath)
 
 
 if __name__ == "__main__":

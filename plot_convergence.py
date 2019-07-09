@@ -1,3 +1,4 @@
+import argparse
 import glob
 import os
 import problem
@@ -50,9 +51,13 @@ def plot_results(results, filename):
 
 
 def main():
-    for filename in glob.glob("convergence*.npz"):
-        results = problem.util.ConvergenceResultList.from_file(filename)
-        plot_results(results, os.path.splitext(filename)[0])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filepath', nargs='+')
+    args = parser.parse_args()
+    for filepath_pattern in args.filepath:
+        for filepath in glob.glob(filepath_pattern):
+            results = problem.util.ConvergenceResultList.from_file(filepath)
+            plot_results(results, os.path.splitext(filepath)[0])
 
 
 if __name__ == "__main__":
