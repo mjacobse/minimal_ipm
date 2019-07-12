@@ -1,3 +1,4 @@
+import argparse
 import numpy
 import os
 import problem
@@ -5,12 +6,26 @@ import problem.ipm.stepsize as ipm_stepsize
 
 
 def main():
-    stepsize_limiter = ipm_stepsize.NonNegativityNeighborhood(0.9995)
-    stepsize_limiter = ipm_stepsize.NegativeInfinityNeighborhood(0.00005)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--x', default=0.1, type=float,
+                        help="Initial value of x")
+    parser.add_argument('--mult_x', default=0.1, type=float,
+                        help="Initial value of the multiplier for the "
+                             "constraint x >= 0")
+    parser.add_argument('--fttb', default=0.99, type=float,
+                        help="Use fraction to the boundary rule with stepsize "
+                             "factor FTTB to determine stepsize ")
+    parser.add_argument('--gamma', type=float,
+                        help="Use negative infinity neighborhood with "
+                             "parameter GAMMA to determine stepsize")
+    args = parser.parse_args()
 
-    init_x = 0.1
-    init_mult_x = 0.1
-    iteration_info = problem.ipm.solve(init_x, init_mult_x, problem.Params(),
+    if args.gamma is not None:
+        stepsize_limiter = ipm_stepsize.NegativeInfinityNeighborhood(args.gamma)
+    else:
+        stepsize_limiter = ipm_stepsize.NonNegativityNeighborhood(args.fttb)
+
+    iteration_info = problem.ipm.solve(args.x, args.mult_x, problem.Params(),
                                        max_iterations=500,
                                        stepsize_limiter=stepsize_limiter)
     iteration_info = list(iteration_info)
