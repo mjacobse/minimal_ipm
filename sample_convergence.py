@@ -2,6 +2,7 @@ import argparse
 import numpy
 import os
 import problem
+import problem.ipm.stepsize as ipm_stepsize
 import random
 
 
@@ -16,9 +17,9 @@ def get_random_initial_guess(params, compl_space=False):
     return init_x, init_mult_x
 
 
-def sample_convergence(filepath):
-    if os.path.isfile(filepath):
-        results = problem.util.ConvergenceResultList.from_file(filepath)
+def sample_convergence(args):
+    if os.path.isfile(args.filepath):
+        results = problem.util.ConvergenceResultList.from_file(args.filepath)
     else:
         results = problem.util.ConvergenceResultList(params=problem.Params(),
                                                      max_iterations=100)
@@ -26,8 +27,10 @@ def sample_convergence(filepath):
     x_optimal = params.get_optimal_solution()
 
     max_iterations = results.max_iterations
-    stepsize_limiter = problem.ipm.stepsize.NonNegativityNeighborhood(0.9995)
-    stepsize_limiter = problem.ipm.stepsize.NegativeInfinityNeighborhood(0.0000605)
+    if args.gamma is not None:
+        stepsize_limiter = ipm_stepsize.NegativeInfinityNeighborhood(args.gamma)
+    else:
+        stepsize_limiter = ipm_stepsize.NonNegativityNeighborhood(args.fttb)
 
     for _ in range(0, 10000):
         init_x, init_mult_x = get_random_initial_guess(params,
@@ -52,15 +55,21 @@ def sample_convergence(filepath):
         results.add_result(init_x, init_mult_x, num_iterations)
         #print(num_iterations)
 
-    results.to_file(filepath)
+    results.to_file(args.filepath)
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filepath')
+    parser.add_argument('--fttb', default=0.99, type=float,
+                        help="Use fraction to the boundary rule with stepsize "
+                             "factor FTTB to determine stepsize ")
+    parser.add_argument('--gamma', type=float,
+                        help="Use negative infinity neighborhood with "
+                             "parameter GAMMA to determine stepsize")
     args = parser.parse_args()
     while True:
-        sample_convergence(args.filepath)
+        sample_convergence(args)
 
 
 if __name__ == "__main__":
