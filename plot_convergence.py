@@ -19,7 +19,8 @@ def plot_results(results, filename):
     plt.scatter(results.converged_x, results.converged_mult_x,
                 edgecolors='none', marker='.', c=results.converged_iterations,
                 cmap='YlGnBu', s=dot_size)
-    plt.colorbar(label='Iterations')
+    if len(results.converged_x) > 0:
+        plt.colorbar(label='Iterations')
     plt.xlim(0, 1)
     plt.yscale('log')
     plt.ylim(1e-10, 1e10)
@@ -38,7 +39,8 @@ def plot_results(results, filename):
                 results.converged_s * results.converged_mult_s,
                 edgecolors='none', marker='.', c=results.converged_iterations,
                 cmap='YlGnBu', s=dot_size)
-    plt.colorbar(label='Iterations')
+    if len(results.converged_x) > 0:
+        plt.colorbar(label='Iterations')
     plt.xscale('log')
     plt.yscale('log')
     plt.xlim(1e-8, 1e8)
