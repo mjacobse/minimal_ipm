@@ -34,7 +34,7 @@ def sample_convergence(args):
 
     for _ in range(0, 10000):
         init_x, init_mult_x = get_random_initial_guess(params,
-                                                       compl_space=False)
+                                                       args.use_compl_space)
         try:
             initial_iterate = problem.FeasibleIterate(init_x,
                                                       init_mult_x,
@@ -67,6 +67,10 @@ def main():
     parser.add_argument('--gamma', type=float,
                         help="Use negative infinity neighborhood with "
                              "parameter GAMMA to determine stepsize")
+    parser.add_argument('--compl', dest='use_compl_space',
+                        action='store_const', const=True, default=False,
+                        help="Sample with random initial complementarity "
+                             "products instead of variables")
     args = parser.parse_args()
     while True:
         sample_convergence(args)

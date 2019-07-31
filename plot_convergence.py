@@ -1,14 +1,20 @@
 import argparse
 import glob
 import os
+import matplotlib
+import matplotlib.pyplot as plt
 import problem
+matplotlib.use('Agg')
 
 
-def plot_results(results, filename):
-    import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
+def plot_results(results, filename, use_compl_space):
+    if use_compl_space:
+        plot_results_compl(results, filename)
+    else:
+        plot_results_normal(results, filename)
 
+
+def plot_results_normal(results, filename):
     dot_size = 5000000 / (len(results.not_converged_x) +
                           len(results.converged_x))
 
@@ -30,6 +36,11 @@ def plot_results(results, filename):
     plt.savefig(filename + '.png', format='png')
     plt.close()
 
+
+def plot_results_compl(results, filename):
+    dot_size = 5000000 / (len(results.not_converged_x) +
+                          len(results.converged_x))
+
     matplotlib.rcParams['figure.figsize'] = (12, 9)
     plt.figure()
     plt.scatter(results.not_converged_x * results.not_converged_mult_x,
@@ -48,18 +59,23 @@ def plot_results(results, filename):
     plt.title('Convergence depending on initial complementarity products')
     plt.xlabel('$x \\lambda_x$')
     plt.ylabel('$s \\lambda_s$')
-    plt.savefig(filename + '_compl.png', format='png')
+    plt.savefig(filename + '.png', format='png')
     plt.close()
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filepath', nargs='+')
+    parser.add_argument('--compl', dest='use_compl_space',
+                        action='store_const', const=True, default=False,
+                        help="Plot complementarity products against eachother"
+                             "instead of primal vs. dual variable")
     args = parser.parse_args()
     for filepath_pattern in args.filepath:
         for filepath in glob.glob(filepath_pattern):
             results = problem.util.ConvergenceResultList.from_file(filepath)
-            plot_results(results, os.path.splitext(filepath)[0])
+            plot_results(results, os.path.splitext(filepath)[0],
+                         args.use_compl_space)
 
 
 if __name__ == "__main__":
