@@ -7,14 +7,14 @@ import problem
 matplotlib.use('Agg')
 
 
-def plot_results(results, filename, use_compl_space):
+def plot_results(results, filename, title, use_compl_space):
     if use_compl_space:
-        plot_results_compl(results, filename)
+        plot_results_compl(results, filename, title)
     else:
-        plot_results_normal(results, filename)
+        plot_results_normal(results, filename, title)
 
 
-def plot_results_normal(results, filename):
+def plot_results_normal(results, filename, title):
     dot_size = 5000000 / (len(results.not_converged_x) +
                           len(results.converged_x))
 
@@ -30,14 +30,14 @@ def plot_results_normal(results, filename):
     plt.xlim(0, 1)
     plt.yscale('log')
     plt.ylim(1e-10, 1e10)
-    plt.title('Convergence depending on initial values')
+    plt.title(title + ' depending on initial values')
     plt.xlabel('$x$')
     plt.ylabel('$\\lambda_x$')
     plt.savefig(filename + '.png', format='png')
     plt.close()
 
 
-def plot_results_compl(results, filename):
+def plot_results_compl(results, filename, title):
     dot_size = 5000000 / (len(results.not_converged_x) +
                           len(results.converged_x))
 
@@ -56,7 +56,7 @@ def plot_results_compl(results, filename):
     plt.yscale('log')
     plt.xlim(1e-8, 1e8)
     plt.ylim(1e-8, 1e8)
-    plt.title('Convergence depending on initial complementarity products')
+    plt.title(title + ' depending on initial complementarity products')
     plt.xlabel('$x \\lambda_x$')
     plt.ylabel('$s \\lambda_s$')
     plt.savefig(filename + '.png', format='png')
@@ -70,12 +70,14 @@ def main():
                         action='store_const', const=True, default=False,
                         help="Plot complementarity products against eachother"
                              "instead of primal vs. dual variable")
+    parser.add_argument('--title', type=str, default="Convergence",
+                        help="Title prefix for plots")
     args = parser.parse_args()
     for filepath_pattern in args.filepath:
         for filepath in glob.glob(filepath_pattern):
             results = problem.util.ConvergenceResultList.from_file(filepath)
             plot_results(results, os.path.splitext(filepath)[0],
-                         args.use_compl_space)
+                         args.title, args.use_compl_space)
 
 
 if __name__ == "__main__":
