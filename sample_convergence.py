@@ -6,17 +6,6 @@ import problem.ipm.stepsize as ipm_stepsize
 import random
 
 
-def get_random_initial_guess(params, compl_space=False):
-    if compl_space:
-        compl_product_x = 10**random.uniform(-8, 8)
-        compl_product_s = 10**random.uniform(-8, 8)
-        return problem.info.get_iterates_from_compl_products(
-            compl_product_x, compl_product_s, params)
-    init_x = random.uniform(0.0, params.upper_bound)
-    init_mult_x = 10**(random.uniform(-10, 10))
-    return init_x, init_mult_x
-
-
 def sample_convergence(args):
     if os.path.isfile(args.filepath):
         results = problem.util.ConvergenceResultList.from_file(args.filepath)
@@ -33,8 +22,8 @@ def sample_convergence(args):
         stepsize_limiter = ipm_stepsize.NonNegativityNeighborhood(args.fttb)
 
     for _ in range(0, 10000):
-        init_x, init_mult_x = get_random_initial_guess(params,
-                                                       args.use_compl_space)
+        init_x, init_mult_x = problem.util.get_random_initial_guess(
+            params, args.use_compl_space)
         try:
             initial_iterate = problem.FeasibleIterate(init_x,
                                                       init_mult_x,

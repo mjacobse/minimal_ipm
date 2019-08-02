@@ -107,3 +107,14 @@ def get_period_length(iteration_info):
         if not iterates[i].isclose(iterates[i + period_length]):
             return num_iterates
     return period_length
+
+
+def get_random_initial_guess(params, compl_space=False):
+    if compl_space:
+        compl_product_x = 10**random.uniform(-8, 8)
+        compl_product_s = 10**random.uniform(-8, 8)
+        return problem.info.get_iterates_from_compl_products(
+            compl_product_x, compl_product_s, params)
+    init_x = random.uniform(0.0, params.upper_bound)
+    init_mult_x = 10**(random.uniform(-10, 10))
+    return init_x, init_mult_x
