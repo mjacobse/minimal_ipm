@@ -3,7 +3,6 @@ import numpy
 import os
 import problem
 import problem.ipm.stepsize as ipm_stepsize
-import random
 
 
 def sample_convergence(args):
